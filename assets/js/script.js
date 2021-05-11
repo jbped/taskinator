@@ -1,7 +1,9 @@
-var buttonEl = document.querySelector("#save-task");
+var formEl = document.querySelector("#task-form")
 var taskToDoEl = document.querySelector("#tasks-to-do");
 
-var createTaskHandler = function () {
+var createTaskHandler = function (event) {
+    // Prevents page from reloading on event
+    event.preventDefault();
     // Create new list item
     var listItemEl = document.createElement("li");
     // Style List item with matching CSS class
@@ -12,6 +14,5 @@ var createTaskHandler = function () {
     taskToDoEl.appendChild(listItemEl);
 };
 
-// On button click with save-task id
-buttonEl.addEventListener("click", createTaskHandler);
-    
+// On form submission (button element nested in the form with the type attribute of "submit") run createTaskHandler function
+formEl.addEventListener("submit", createTaskHandler)    
