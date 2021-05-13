@@ -4,6 +4,7 @@ var pageContentEl = document.querySelector('#page-content');
 var tasksInProgressEl = document.querySelector('#tasks-in-progress');
 var tasksCompleteEl = document.querySelector('#tasks-completed');
 var taskIdCounter = 0;
+var tasks = [];
 
 var taskFormHandler = function (event) {
     // Prevents page from reloading on event
@@ -27,7 +28,8 @@ var taskFormHandler = function (event) {
     else {
         var taskDataObj = {
             name:taskNameInput,
-            type:taskTypeInput
+            type:taskTypeInput,
+            status: "to do"
          };
         createTaskEl(taskDataObj);
     }
@@ -57,8 +59,15 @@ var createTaskEl = function(taskDataObj){
     // Create a new child which is the above listItemEl in the ul associated with taskToDoEl
     taskToDoEl.appendChild(listItemEl);
 
+    taskDataObj.id = taskIdCounter;
+
+    tasks.push(taskDataObj);
+
     // Increate taskId Counter
     taskIdCounter++;
+
+    console.log(taskDataObj);
+    console.log(taskDataObj.status);
 }
 
 var createTaskActions = function(taskId){
@@ -127,6 +136,19 @@ var taskButtonHandler = function(event) {
 var deleteTask = function(taskId){
     var taskSelected = document.querySelector('.task-item[data-task-id="' + taskId + '"]');
     taskSelected.remove();
+
+    // create new array to hold updarted list of tasks
+    var updatedTaskArr = [];
+    
+    // loop through current tasks and delete, if they don't match with existing array generate updatedTaskArr
+    for (var i = 0; i < tasks.length; i++) {
+        // if tasks[i] doens't match the value of taskId, keep that task
+        if (tasks[i].id !== parseInt(taskId)){
+            updatedTaskArr.push(tasks[i]);
+        }
+    }
+    // reassign tasks array to the same as the updatedTaskArry
+    tasks = updatedTaskArr;
 }
 
 var editTask = function(taskId) {
@@ -167,6 +189,13 @@ var taskStatusChangeHandler = function(event) {
     else if (statusValue === 'completed') {
         tasksCompleteEl.appendChild(taskSelected);
     }
+    // update task's in tasks array
+    for (var i = 0; i < tasks.length; i++) {
+        if (tasks[i].id === parseInt(taskId))  {
+            tasks[i].status = statusValue;
+        }
+    }
+    console.log(tasks)
 }
 
 var completeEditTask = function(taskName, taskType, taskId) {
@@ -176,6 +205,14 @@ var completeEditTask = function(taskName, taskType, taskId) {
     // set new values
     taskSelected.querySelector('h3.task-name').textContent = taskName;
     taskSelected.querySelector('span.task-type').textContent = taskType;
+
+    // Cross compares the taskId and the task then adds the name to the task object
+    for (var i = 0; i < tasks.length; i++){
+        if (tasks[i].id === parseInt(taskId)){
+            tasks[i].name = taskName;
+            tasks[i].type = taskType;
+        }
+    };
 
     alert("Task Updated!");
 
